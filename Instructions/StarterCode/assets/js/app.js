@@ -66,18 +66,18 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
   var label;
 
-  if (chosenXAxis === "hair_length") {
-    label = "Hair Length:";
+  if (chosenXAxis === "Poverty") {
+    label = "Poverty:";
   }
   else {
-    label = "# of Albums:";
+    label = "age:";
   }
 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
-    .offset([80, -60])
+    // .offset([80, -60])
     .html(function(d) {
-      return (`${d.rockband}<br>${label} ${d[chosenXAxis]}`);
+      return (`${d.state}<br>${label} ${d[chosenXAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -137,11 +137,22 @@ console.log(hairData);
     .data(hairData)
     .enter()
     .append("circle")
-    .attr("cx", d => xLinearScale(d[chosenXAxis]))
-    .attr("cy", d => yLinearScale(d.poverty))
+    .attr("cx", d => xLinearScale(d.poverty))
+    .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", 20)
-    .attr("fill", "pink")
-    .attr("opacity", ".5");
+    .attr("fill", "w")
+    // .attr("opacity")
+    chartGroup.selectAll("circle")
+                    .data(hairData)
+                    .enter()
+                    .append("text")
+                    .attr("x", function(d) {
+                                    return xLinearScale(d.poverty);
+                                })
+                    .attr("y",function(d) {
+                                    return yLinearScale(d.healthcare);
+                                })
+                    .attr("font-size","15px")
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -159,7 +170,14 @@ console.log(hairData);
     .attr("y", 40)
     .attr("value", "income") // value to grab for event listener
     .classed("inactive", true)
-    .text("income");
+    .text("Household Income (Median)");
+
+    var Label = labelsGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 60)
+    .attr("value", "age") // value to grab for event listener
+    .classed("inactive", true)
+    .text("Age (Median)");
 
   // append y axis
   chartGroup.append("text")
@@ -168,8 +186,26 @@ console.log(hairData);
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("Lack of Healthcare");
+    .text("Obese (%)");
 
+    chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 20 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .classed("axis-text", true)
+    .text("Smokes (%)")
+
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 40 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .classed("axis-text", true)
+    .text("Lacks Healthcare (%)");
+
+    
+    
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
@@ -199,7 +235,7 @@ console.log(hairData);
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
         // changes classes to change bold text
-        if (chosenXAxis === "income") {
+        if (chosenXAxis === "poverty") {
           albumsLabel
             .classed("active", true)
             .classed("inactive", false);
